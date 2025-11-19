@@ -6,184 +6,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.0/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.0/theme/black.min.css" id="theme">
     <style>
-        /* Дополнительные стили для GitLab-совместимости */
         .reveal pre code {
             max-height: 400px;
-        }
-        .reveal table {
-            font-size: 0.9em;
-        }
-        .reveal table td {
-            word-break: break-word;
         }
     </style>
 </head>
 <body>
     <div class="reveal">
         <div class="slides">
-            <!-- Слайд 1 -->
-            <section>
-                <h1>Параллельное выполнение программ</h1>
-                <h3>Примитивы синхронизации и типовые шаблоны</h3>
-                <p>Презентация для GitLab</p>
-            </section>
-
-            <!-- Слайд 2 -->
-            <section>
-                <h2>Введение</h2>
-                <ul>
-                    <li>Почему параллелизм важен?</li>
-                    <li>Проблемы при параллельном выполнении:
-                        <ul>
-                            <li>Гонки данных (data races)</li>
-                            <li>Непредсказуемое поведение</li>
-                        </ul>
-                    </li>
-                    <li>Необходимость синхронизации</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 3 -->
-            <section>
-                <h2>Основные понятия</h2>
-                <ul>
-                    <li>Поток (thread)</li>
-                    <li>Критическая секция (critical section)</li>
-                    <li>Взаимное исключение (mutual exclusion)</li>
-                    <li>Состояние гонки (race condition)</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 4 -->
-            <section>
-                <h2>Примитивы синхронизации — Обзор</h2>
-                <ul>
-                    <li>Mutex (мьютекс)</li>
-                    <li>Semaphore (семафор)</li>
-                    <li>Condition Variable (условная переменная)</li>
-                    <li>Atomic Types (атомарные типы)</li>
-                    <li>Lock-free и wait-free структуры</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 5 -->
-            <section>
-                <h2>Mutex (мьютекс)</h2>
-                <p>Гарантия, что только один поток в критической секции</p>
-                <pre><code data-trim data-line-numbers>
-lock(mutex)
-// критическая секция
-unlock(mutex)
-                </code></pre>
-                <p>Проблемы: дедлоки, блокировки</p>
-            </section>
-
-            <!-- Слайд 6 -->
-            <section>
-                <h2>Semaphore (семафор)</h2>
-                <ul>
-                    <li>Счётчик для ограничения числа потоков</li>
-                    <li>Двоичный (бинарный) vs. счётный семафор</li>
-                </ul>
-                <p>Пример: ограничение числа активных задач</p>
-            </section>
-
-            <!-- Слайд 7 -->
-            <section>
-                <h2>Condition Variable</h2>
-                <ul>
-                    <li>Ожидание изменения состояния</li>
-                    <li>Взаимодействие с мьютексом</li>
-                </ul>
-                <p>Пример: шаблон "производитель-потребитель"</p>
-            </section>
-
-            <!-- Слайд 8 -->
-            <section>
-                <h2>Atomic Types</h2>
-                <ul>
-                    <li>Операции над переменной — атомарны</li>
-                    <li>Пример: <code>std::atomic<int></code></li>
-                    <li>Используется для: счётчиков, флагов</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 9 -->
-            <section>
-                <h2>Шаблон: Producer-Consumer</h2>
-                <ul>
-                    <li>Описание: один поток производит, другой потребляет</li>
-                    <li>Реализация: очередь + мьютекс + условная переменная</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 10 -->
-            <section>
-                <h2>Шаблон: Readers-Writer Lock</h2>
-                <ul>
-                    <li>Сценарий: много читающих, мало пишущих</li>
-                    <li>Специальный тип блокировки</li>
-                    <li>Пример: кэш, таблица настроек</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 11 -->
-            <section>
-                <h2>Lock-Free и Wait-Free</h2>
-                <ul>
-                    <li>Структуры данных без блокировок</li>
-                    <li>Преимущества: избегание дедлоков, высокая производительность</li>
-                    <li>Пример: lock-free очередь</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 12 -->
-            <section>
-                <h2>Дедлоки (Deadlocks)</h2>
-                <ul>
-                    <li>Что такое: два или более потока ждут друг друга</li>
-                    <li>Как избежать: порядок захвата, таймауты</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 13 -->
-            <section>
-                <h2>Лучшие практики</h2>
-                <ul>
-                    <li>Минимизировать использование блокировок</li>
-                    <li>RAII: <code>lock_guard</code> в C++</li>
-                    <li>Избегать вложенных блокировок</li>
-                    <li>Использовать атомарные операции для простых задач</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 14 -->
-            <section>
-                <h2>Заключение</h2>
-                <ul>
-                    <li>Параллелизм требует осторожного подхода</li>
-                    <li>Правильный выбор примитивов критически важен</li>
-                    <li>Понимание шаблонов помогает избежать ошибок</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 15 -->
-            <section>
-                <h2>Вопросы?</h2>
-                <p>Спасибо за внимание!</p>
+            <section data-markdown="slides.md"
+                     data-separator="^\n---\n$"
+                     data-separator-vertical="^\n--\n$">
             </section>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.0/plugin/markdown/markdown.min.js"></script>
     <script>
         Reveal.initialize({
+            plugins: [ RevealMarkdown ],
             controls: true,
             progress: true,
             history: true,
             center: true,
-            transition: 'slide',
-            hash: true
+            transition: 'slide'
         });
     </script>
 </body>
